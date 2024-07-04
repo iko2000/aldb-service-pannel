@@ -2,18 +2,29 @@
 import React from 'react';
 import Link from 'next/link';
 import  {useState, useEffect} from 'react';
+import useAuthStore from '@/store/store';
+import { useRouter } from 'next/navigation';
+
 
 const Header = () => {
+  const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
+    const user = useAuthStore((state:any) => state.user);
+    const logout = useAuthStore((state:any) => state.logout);
 
     const toggleMenu = () => {
       setIsOpen(!isOpen);
     };
-
+    console.log(user);
+    const handleLogout = async () => {
+      await logout();
+      router.push('/login');
+    };
   return (
     <header className="bg-blue-500 p-4 text-white">
     <div className="container mx-auto flex justify-between items-center">
-      {isOpen ? null : <h1 className="text-xl font-bold">My Website</h1>}
+      {isOpen ? null : <h1 className="text-xl font-bold">ALDB</h1>}
+      {user ? <text>Hello, {user.email} </text> : null}
       <nav>
         <div className="md:hidden">
           <button onClick={toggleMenu} className="focus:outline-none">
@@ -28,21 +39,21 @@ const Header = () => {
              Home
             </Link>
           </li>
-          <li className="mt-2 md:mt-0">
-            <Link href="/about">
-             About
+          {user ? <button onClick={() => handleLogout()}>Log Out</button> : <li className="mt-2 md:mt-0">
+            <Link href="/login">
+             Login
             </Link>
-          </li>
-          <li className="mt-2 md:mt-0">
-            <Link href="/booknow">
-             Book Now
+          </li>}
+        {user ? <li className="mt-2 md:mt-0">
+            <Link href="/reports">
+             REPORTS
             </Link>
-          </li>
-          <li className="mt-2 md:mt-0">
-            <Link href="/contact">
-             Contact
+          </li> : null }  
+          {user ?   <li className="mt-2 md:mt-0">
+            <Link href="/performance">
+             Performance
             </Link>
-          </li>
+          </li>: null }
         </ul>
       </nav>
     </div>
